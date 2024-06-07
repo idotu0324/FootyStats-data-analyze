@@ -198,15 +198,15 @@ class matches_anl:
 
     for i in range(len(n_rank)):
       n_rank.loc[i, 'index'] = i+1
-
+    # n_rank의 순위가 저장된 칼럼의 이름은 입력받은 팀 번호의 인덱스인 n-1이다 
     n_rank = n_rank.rename(columns={'index':'week',
-                                1:'Rank'})
-
-    n_rank = n_rank.set_index('week')
+                                n-1:'Rank'})
 
     # 순위추이 그래프
     plt.figure(figsize=(10,5))
-    plt.plot(n_rank)
+    plt.title(self.teams['Team'][n-1])
+    plt.scatter(n_rank['week'], n_rank['Rank'])
+    plt.plot(n_rank['week'], n_rank['Rank'])
     plt.xticks(np.arange(1,len(n_rank)+1,1))
     plt.yticks(np.arange(1,len(self.teams)+1,1))
     plt.gca().invert_yaxis()
@@ -231,7 +231,7 @@ class players_anl:
     goals['goals_overall'] = goals['goals_away'] + goals['goals_home']
     #goals.index = goals.index+1 # 인덱스를 1부터 하여 순위를 1부터 보이게한다
 
-
+    print('홈, 어웨이, 통합 골 순위를 확인합니다.')
     n = int(input('몇 순위 까지 확인 하겠습니까? '))
 
     # 어웨이 골이 많은 순서 top5
@@ -272,12 +272,31 @@ class players_anl:
     return top_a
 #---------------------------------------------------------------------------
   
-
+# 분석 결과출력
 m = matches_anl(matches)
 print(m.team_points(), end="\n\n")
 m.team_rank_graph()
 
 p = players_anl(players)
-p.most_goal_team()
-p.top_scorer()
-p.top_assister()
+
+top_scorer = p.top_scorer()
+print('\n----------------------------------------------------')
+print('시즌 득점왕 {}'.format(top_scorer))
+print('----------------------------------------------------\n')
+top_assister = p.top_assister()
+print('----------------------------------------------------')
+print('시즌 도움왕 {}'.format(top_assister))
+print('----------------------------------------------------\n')
+
+# home: 홈골이 많은 top n / away: 어웨이골이 많은 top n / total: 통합골이 많은 top n / n: 몇순위까지인지 
+home, away, total, n = p.most_goal_team()
+print('----------------------------------------------------')
+print('|Home Goal Top{}|'.format(n))
+print(home)
+print('----------------------------------------------------')
+print('|Away Goal Top{}|'.format(n))
+print(away)
+print('----------------------------------------------------')
+print('|Goal Overall Top{}|'.format(n))
+print(total)
+print('----------------------------------------------------')
