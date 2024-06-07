@@ -215,8 +215,6 @@ class matches_anl:
     plt.show()
 #---------------------------------------------------------------------------
 
-#---------------------------------------------------------------------------
-# 선수데이터를 이용한 분석 클래스 
 class players_anl:
 
   def __init__(self, players):
@@ -233,7 +231,7 @@ class players_anl:
     goals['goals_overall'] = goals['goals_away'] + goals['goals_home']
     #goals.index = goals.index+1 # 인덱스를 1부터 하여 순위를 1부터 보이게한다
 
-    print('\n팀의 홈, 어웨이, 통합 골 순위를 분석합니다.')
+
     n = int(input('몇 순위 까지 확인 하겠습니까? '))
 
     # 어웨이 골이 많은 순서 top5
@@ -248,18 +246,7 @@ class players_anl:
     g_top = goals.sort_values(by = 'goals_overall', ascending = False)[:n].reset_index().iloc[:,[0,3]]
     g_top['Rank'] = g_top.index+1
     g_top = g_top.set_index('Rank')
-
-    # 분석 결과 출력
-    print('----------------------------------------------------')
-    print('|Home Goal Top{}|'.format(n))
-    print(homeg_top)
-    print('----------------------------------------------------')
-    print('|Away Goal Top{}|'.format(n))
-    print(awayg_top)
-    print('----------------------------------------------------')
-    print('|Goal Overall Top{}|'.format(n))
-    print(g_top)
-    print('----------------------------------------------------\n')
+    return homeg_top, awayg_top, g_top, n
 
     # 득점왕
   def top_scorer(self):
@@ -271,10 +258,7 @@ class players_anl:
     top_s = scorer[lambda x: x['goals_overall'] == maxscore].copy()
     top_s['Rank'] = int(np.where(lambda x: x['goals_overall'] == maxscore, 1, np.NaN))# int안씌우면 1.0이된다
     top_s = top_s.set_index('Rank')
-    print('\n시즌 득점왕을 확인힙니다.')
-    print('----------------------------------------------------')
-    print('시즌 득점왕 {}'.format(top_s))
-    print('----------------------------------------------------')
+    return top_s
 
   def top_assister(self):
     # 선수이름과 골 수를 가지고있는 데이터프레임 생성 (오름차순으로 정렬)
@@ -285,11 +269,9 @@ class players_anl:
     top_a = assists[lambda x: x['assists_overall'] == maxassists].copy()
     top_a['Rank'] = int(np.where(lambda x: x['asists_overall'] == maxassists, 1, np.NaN)) # int안씌우면 1.0이된다
     top_a = top_a.set_index('Rank')
-    print('\n시즌 도움왕을 확인힙니다.')
-    print('----------------------------------------------------')
-    print('시즌 도움왕 {}'.format(top_a))
-    print('----------------------------------------------------')
-    #---------------------------------------------------------------------------
+    return top_a
+#---------------------------------------------------------------------------
+  
 
 m = matches_anl(matches)
 print(m.team_points(), end="\n\n")
