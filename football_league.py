@@ -180,6 +180,39 @@ class matches_anl:
       # week데이터에 각 주차별 랭크를 합친다
       week = week.merge(weekrank, on='Team')
 
+    # 각 팀별 주차별 순위를 시각화한다
+    plt.figure(figsize=(12,7))
+    plt.title('Weekly Team Ranking', fontsize=20, fontweight='bold')
+    plt.gca().invert_yaxis()
+    plt.xlabel('Week')
+    plt.ylabel('Rank')
+    for i in range(len(self.teams)):
+      n_rank = week.loc[i].to_frame()
+      n_rank = n_rank[1:]
+      n_rank = n_rank.reset_index(drop=True)
+      n_rank = n_rank.reset_index()
+      for j in range(len(n_rank)):
+        n_rank.loc[j, 'index'] = j+1
+      # n_rank의 rank부분 열의 이름은 팀 번호인 n-1로 되어있다 
+      n_rank = n_rank.rename(columns={'index':'week',
+                                i:'Rank'})
+      # 반은 선으로 반은 점선으로 하여 가독성을 높인다 
+      if i < len(self.teams)/2:
+        plt.plot(n_rank['week'], n_rank['Rank'], label=str(self.teams['Team'][i]))
+        plt.legend(bbox_to_anchor=(1,1))
+      else:
+        plt.plot(n_rank['week'], n_rank['Rank'], label=str(self.teams['Team'][i]), linestyle='dotted')
+        plt.legend(bbox_to_anchor=(1,1))
+      plt.scatter(n_rank['week'], n_rank['Rank'], s=5)
+      #if i == len(self.n_rank):
+        #plt.annotate('{}'.format(self.teams[i]), (n_rank['week'], n_rank['Rank']))
+    plt.xticks(np.arange(1,len(n_rank)+1,1))
+    plt.yticks(np.arange(1,len(self.teams)+1,1))
+    plt.grid(axis='y')
+    plt.tight_layout()
+    plt.show()
+
+    # 특정 팀을 골라 순위를 시각화한다 
     print('no. Team Name')
     print('------------------------------')
     for i in range(len(self.teams)):
@@ -204,7 +237,7 @@ class matches_anl:
 
     # 순위추이 그래프
     plt.figure(figsize=(10,5))
-    plt.title(self.teams['Team'][n-1])
+    plt.title(self.teams['Team'][n-1], fontsize=20, fontweight='bold')
     plt.scatter(n_rank['week'], n_rank['Rank'])
     plt.plot(n_rank['week'], n_rank['Rank'])
     plt.xticks(np.arange(1,len(n_rank)+1,1))
@@ -212,6 +245,8 @@ class matches_anl:
     plt.gca().invert_yaxis()
     plt.xlabel('Week')
     plt.ylabel('Rank')
+    plt.grid(axis='y')
+    plt.tight_layout()
     plt.show()
 #---------------------------------------------------------------------------
 
